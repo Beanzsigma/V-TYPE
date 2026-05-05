@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from ctypes import windll, byref, create_unicode_buffer, create_string_buffer
 from tkinter import Canvas, Text
 import sys
 import os
@@ -12,13 +13,31 @@ main_window = ctk.CTk()
 main_window.title('V-TYPE')
 main_window.geometry('400x400')
 main_window.resizable(False, False)
-def get_path(relativepath):
+def get_path(relative_path):
     try:
-        basebath = sys._MEIPASS
+        base_path = sys._MEIPASS
     except AttributeError:
-        basebath = os.path.abspath(".")
-    return os.path.join(basebath, relativepath)
-from ctypes import windll, byref, create_unicode_buffer, create_string_buffer
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+FR_PRIVATE = 0x10
+def loadfont(font_path):
+    windll.gdi32.AddFontResourceExW(font_path, FR_PRIVATE, 0)
+
+def roundedrect(canvas, x1, y1, x2, y2, r=20, color="#88bcf7", width=2):
+    arc_kwargs = {"outline": color, "width": width}
+    line_kwargs = {"fill": color, "width": width}
+    canvas.create_arc(x1, y1, x1+2*r, y1+2*r, start=90, extent=90, style="arc", **arc_kwargs)
+    canvas.create_arc(x2-2*r, y1, x2, y1+2*r, start=0, extent=90, style="arc", **arc_kwargs)
+    canvas.create_arc(x1, y2-2*r, x1+2*r, y2, start=180, extent=90, style="arc", **arc_kwargs)          
+    canvas.create_arc(x2-2*r, y2-2*r, x2, y2, start=270, extent=90, style="arc", **arc_kwargs)
+    canvas.create_line(x1+r, y1, x2-r, y1, **line_kwargs)
+    canvas.create_line(x1+r, y2, x2-r, y2, **line_kwargs)
+    canvas.create_line(x1, y1+r, x1, y2-r, **line_kwargs)
+    canvas.create_line(x2, y1+r, x2, y2-r, **line_kwargs)
+    
+loadfont(get_path("bansheepilotbold1.ttf"))
+loadfont(get_path("essedicom.ttf"))
+
 def gifbg(): 
     global after_id
     if after_id: 
@@ -27,7 +46,7 @@ def gifbg():
         widget.destroy()
 
     frames = []
-    gif = Image.open(get_path(''))
+    gif = Image.open(get_path('coolgif.gif'))
     for frame in ImageSequence.Iterator(gif):
         frame = frame.copy().convert('RGBA')
         r, g, b, a = frame.split()
@@ -43,9 +62,12 @@ def gifbg():
         canvas._frames = frames
         after_id = main_window.after(20, animate, (frame_index +1)% len(frames))
     animate()
-
-
-
+gifbg()                                            # gif code end here
+def clear(canvas, canvas_img):
+    for item in canvas.find_all():
+        if item != canvas_img:
+            canvas.delete(item)
+ 
 
 
 main_window.mainloop()
