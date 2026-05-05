@@ -62,12 +62,16 @@ def gifbg():
         canvas._frames = frames
         after_id = main_window.after(20, animate, (frame_index +1)% len(frames))
     animate()
-gifbg()                                            # gif code end here
+    return canvas, canvasbg
+canvas, canvasbg = gifbg()                                            # gif code end here
 def clear(canvas, canvas_img):
     for item in canvas.find_all():
         if item != canvas_img:
             canvas.delete(item)
- 
 
+def welcome(canvas, canvasbg):
+    canvas.create_text(200, 150, text="V-TYPE", font=('Banshee Pilot Bold', 42), fill='white', anchor="center")
+    canvas.create_text(200, 235, text="CONTINUE", font=('essedicom', 39), fill='white', anchor="center")
 
+welcome(canvas, canvasbg)
 main_window.mainloop()
