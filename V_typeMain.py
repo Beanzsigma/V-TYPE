@@ -85,15 +85,17 @@ def control(canvas, canvas_img):
     canvas.tag_bind(typecode, "<Enter>", lambda e: canvas.itemconfig(typecode, fill="#577891"))
     canvas.tag_bind(typecode, "<Leave>", lambda e: canvas.itemconfig(typecode, fill="white"))
     buttoncheck = [False]
-    chexbox = canvas.create_rectangle(110, 312, 130, 332, outline="white", width=2, fill="black", stipple="gray12")
-    buttoncheck1 = canvas.create_text(120, 322, text="✓", font=('Arial', 14), fill='white')
+    chexbox = canvas.create_rectangle(138, 312, 158, 332, outline="white", width=2, fill="black", stipple="gray12")
+    buttoncheck1 = canvas.create_text(148, 322, text="✓", font=('Arial', 14), fill='white')
     canvas.itemconfig(buttoncheck1, state='hidden')
     def togglebutton(e):
         buttoncheck[0] = not buttoncheck[0]
         canvas.itemconfig(buttoncheck1, state="normal" if buttoncheck[0] else "hidden")
     canvas.tag_bind(chexbox, "<Button-1>", togglebutton)
     canvas.tag_bind(buttoncheck1, "<Button-1>", togglebutton)
-    canvas.create_text(320, 300, font=('essedicom', 32), fill="white", anchor='center', text="Jitter")
+    canvas.create_text(200, 320, font=('essedicom', 30), fill="white", anchor='center', text="Jitter")
+
+
 def welcome(canvas, canvasbg):
     canvas.create_text(200, 150, text="V-TYPE", font=('Banshee Pilot Bold', 42), fill='white', anchor="center")
     continuetext = canvas.create_text(200, 235, text="CONTINUE", font=('essedicom', 39), fill='white', anchor="center")
