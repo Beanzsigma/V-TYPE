@@ -37,6 +37,7 @@ def roundedrect(canvas, x1, y1, x2, y2, r=20, color="#88bcf7", width=2):
     
 loadfont(get_path("bansheepilotbold1.ttf"))
 loadfont(get_path("essedicom.ttf"))
+loadfont(get_path('Honor.ttf'))
 
 def gifbg(): 
     global after_id
@@ -71,6 +72,9 @@ def clear(canvas, canvas_img):
 
 def control(canvas, canvas_img):
     clear(canvas, canvas_img)
+    canvas.create_text(200, 30, text="V-TYPE", font=('Banshee Pilot Bold', 30), fill="white", anchor="center")
+    textarea = ctk.CTkTextbox(canvas, width =180, height=90, bg_color="#0C4169", fg_color="#0C4169", border_color="white", border_width=2, text_color="white", corner_radius=4, font=('Honor', 16), wrap="word")
+    canvas.create_window(200, 120, window=textarea, anchor="center")
 
 def welcome(canvas, canvasbg):
     canvas.create_text(200, 150, text="V-TYPE", font=('Banshee Pilot Bold', 42), fill='white', anchor="center")
