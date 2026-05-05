@@ -72,10 +72,18 @@ def clear(canvas, canvas_img):
 
 def control(canvas, canvas_img):
     clear(canvas, canvas_img)
+    exitcode = canvas.create_text(20, 20, text="Exit", font=('essedicom', 30), fill="white", anchor="nw")
+    canvas.tag_bind(exitcode, "<Button-1>", lambda e:main_window.destroy())
+    canvas.tag_bind(exitcode, "<Enter>", lambda e: canvas.itemconfig(exitcode, fill="#577891"))
+    canvas.tag_bind(exitcode, "<Leave>", lambda e: canvas.itemconfig(exitcode, fill="white") )
     canvas.create_text(200, 30, text="V-TYPE", font=('Banshee Pilot Bold', 30), fill="white", anchor="center")
-    textarea = ctk.CTkTextbox(canvas, width =180, height=90, bg_color="#0C4169", fg_color="#0C4169", border_color="white", border_width=2, text_color="white", corner_radius=4, font=('Honor', 16), wrap="word")
-    canvas.create_window(200, 120, window=textarea, anchor="center")
-
+    textarea = ctk.CTkTextbox(canvas, width =270, height=185, bg_color="#0C4169", fg_color="#0C4169", border_color="white", border_width=2, text_color="white", corner_radius=4, font=('Honor', 16), wrap="word")
+    canvas.create_text(200, 72, text="Enter text", font=('essedicom', 34), fill='white', anchor='center')
+    canvas.create_window(200, 198, window=textarea, anchor="center")
+    typecode = canvas.create_text(200, 370, text="Start", font=('essedicom', 43), fill="white", anchor="center")
+    canvas.tag_bind(typecode, "<Button-1>", lambda e:control(canvas, canvas_img))
+    canvas.tag_bind(typecode, "<Enter>", lambda e: canvas.itemconfig(typecode, fill="#577891"))
+    canvas.tag_bind(typecode, "<Leave>", lambda e: canvas.itemconfig(typecode, fill="white"))
 def welcome(canvas, canvasbg):
     canvas.create_text(200, 150, text="V-TYPE", font=('Banshee Pilot Bold', 42), fill='white', anchor="center")
     continuetext = canvas.create_text(200, 235, text="CONTINUE", font=('essedicom', 39), fill='white', anchor="center")
