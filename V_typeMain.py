@@ -69,9 +69,14 @@ def clear(canvas, canvas_img):
         if item != canvas_img:
             canvas.delete(item)
 
+def control(canvas, canvas_img):
+    clear(canvas, canvas_img)
+
 def welcome(canvas, canvasbg):
     canvas.create_text(200, 150, text="V-TYPE", font=('Banshee Pilot Bold', 42), fill='white', anchor="center")
-    canvas.create_text(200, 235, text="CONTINUE", font=('essedicom', 39), fill='white', anchor="center")
-
+    continuetext = canvas.create_text(200, 235, text="CONTINUE", font=('essedicom', 39), fill='white', anchor="center")
+    canvas.tag_bind(continuetext, "<Button-1>", lambda e: control(canvas, canvasbg))
+    canvas.tag_bind(continuetext, "<Enter>", lambda e: canvas.itemconfig(continuetext, fill="#577891"))
+    canvas.tag_bind(continuetext, "<Leave>", lambda e: canvas.itemconfig(continuetext, fill="white"))
 welcome(canvas, canvasbg)
 main_window.mainloop()
