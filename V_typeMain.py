@@ -1,3 +1,4 @@
+import random
 import customtkinter as ctk
 from ctypes import windll, byref, create_unicode_buffer, create_string_buffer
 from tkinter import Canvas, Text
@@ -13,6 +14,9 @@ main_window = ctk.CTk()
 main_window.title('V-TYPE')
 main_window.geometry('400x400')
 main_window.resizable(False, False)
+typing = False
+stopflag = threading.Event()
+typer = Controller()
 def get_path(relative_path):
     try:
         base_path = sys._MEIPASS
@@ -20,6 +24,27 @@ def get_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 FR_PRIVATE = 0x10
+def typetext(text, jitter):
+    global typing 
+    typing = True
+    stopflag.clear()
+    canvas.create_text(200, 200)
+    time.sleep(3)
+    for char in text:
+        if stopflag.is_set():
+                break
+        typer.type(char)
+        if jitter:
+            time.sleep(random.uniform(0.03, 0.15))
+            if random.random() <0.08:
+                typer.press(Key.backspace)
+                typer.release(Key.backspace)
+                time.sleep(0.5)
+                time.sleep(random.uniform(0.05, 0.2))
+                typer.type(char)
+        else:
+            time.sleep(0.05)
+    typing = False
 def loadfont(font_path):
     windll.gdi32.AddFontResourceExW(font_path, FR_PRIVATE, 0)
 
@@ -69,7 +94,13 @@ def clear(canvas, canvas_img):
     for item in canvas.find_all():
         if item != canvas_img:
             canvas.delete(item)
-
+def starttyping(textarea, buttoncheck):
+    if typing:
+        return
+    text = textarea.get("1.0", "end-1c")
+    if not text.strip():
+        return
+    threading.Thread(target=typetext, args=(text, buttoncheck[0]), daemon=True).start()
 def control(canvas, canvas_img):
     clear(canvas, canvas_img)
     exitcode = canvas.create_text(20, 20, text="Exit", font=('essedicom', 30), fill="white", anchor="nw")
@@ -81,7 +112,7 @@ def control(canvas, canvas_img):
     canvas.create_text(200, 72, text="Enter text", font=('essedicom', 34), fill='white', anchor='center')
     canvas.create_window(200, 198, window=textarea, anchor="center")
     typecode = canvas.create_text(200, 370, text="Start", font=('essedicom', 43), fill="white", anchor="center")
-    canvas.tag_bind(typecode, "<Button-1>", lambda e:control(canvas, canvas_img))
+    canvas.tag_bind(typecode, "<Button-1>", lambda e: starttyping(textarea, buttoncheck))
     canvas.tag_bind(typecode, "<Enter>", lambda e: canvas.itemconfig(typecode, fill="#577891"))
     canvas.tag_bind(typecode, "<Leave>", lambda e: canvas.itemconfig(typecode, fill="white"))
     buttoncheck = [False]
