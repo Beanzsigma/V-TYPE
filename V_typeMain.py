@@ -9,6 +9,7 @@ import time
 from pynput import keyboard
 from pynput.keyboard import Controller, Key
 from PIL import Image, ImageSequence, ImageTk
+paused =False
 after_id = None
 main_window = ctk.CTk()
 main_window.title('V-TYPE')
@@ -24,8 +25,8 @@ def get_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 FR_PRIVATE = 0x10
-def typetext(text, jitter, canvas, countdown_label, speed):
-    global typing 
+def typetext(text, jitter, canvas, countdown_label, speed, pausebutton):
+    global typing, paused
     typing = True
     stopflag.clear()
     main_window.after(0, lambda: canvas.lift(countdown_label))
@@ -36,27 +37,33 @@ def typetext(text, jitter, canvas, countdown_label, speed):
     main_window.after(0, lambda: canvas.itemconfigure('textwin', state='normal'))
     main_window.after(0,lambda:canvas.itemconfigure('sliderwin', state='normal') )
     for char in text:
+        while paused:
+            time.sleep(0.1)
         if stopflag.is_set():
-                break
+            break
+        if jitter and random.random() < 0.05:
+            rando1 = random.choice('abcdefghijklmnopqrstuvwxyz')
+            rando2 = random.choice('abcdefghijklmnopqrstuvwxyz')
+            typer.type(rando1)
+            time.sleep(random.uniform(0.2, 0.5))
+            typer.type(rando2)
+            time.sleep(random.uniform(0.2, 0.5))
+            time.sleep(random.uniform(0.3, 0.7))
+            for _ in range(2):
+                time.sleep(random.uniform(0.05, 0.1))
+                typer.press(Key.backspace)
+                time.sleep(random.uniform(0.05, 0.1))
+                typer.release(Key.backspace)
+                time.sleep(random.uniform(0.05, 0.1))
+            time.sleep(random.uniform(0.05, 0.2))
         typer.type(char)
         if jitter:
-            time.sleep(random.uniform(speed *0.5, speed*3))
-            if random.random() <0.08:
-                rando1 = random.choice('abcdefghijklmnopqrstuvwxyz')
-                rando2 = random.choice('abcdefghijklmnopqrstuvwxyz')
-                typer.type(rando1)
-                time.sleep(random.uniform(0.05, 0.15))
-                typer.tpye(rando2)
-                time.sleep(random.uniform(0.05, 0.15))
-                for _ in range(2):
-                    typer.press(Key.backspace)
-                    typer.release(Key.backspace)
-                    time.sleep(random.uniform(0.05, 0.1))
-                time.sleep(random.uniform(0.05, 0.2))
-                typer.type(char)
+            time.sleep(random.uniform(speed * 0.5, speed * 3.5))
         else:
             time.sleep(speed)
     typing = False
+    paused = False
+    main_window.after(0, lambda: canvas.itemconfig(pausebutton, text="⏸"))
 def loadfont(font_path):
     windll.gdi32.AddFontResourceExW(font_path, FR_PRIVATE, 0)
 
@@ -106,20 +113,30 @@ def clear(canvas, canvas_img):
     for item in canvas.find_all():
         if item != canvas_img:
             canvas.delete(item)
-def starttyping(textarea, buttoncheck, canvas, speedslider):
+def starttyping(textarea, buttoncheck, canvas, speedslider, pausebutton):
     if typing:
         return
     text = textarea.get('1.0', "end-1c")
     if not text.strip():
         return
-    countdown_label = canvas.create_text(200, 200, text="3", font=('Banshee Pilot Bold', 60), fill="white")
+    countdown_label = canvas.create_text(200, 200, text="3", font=('Banshee Pilot Bold', 60), fill="white", anchor="center")
     canvas.lift(countdown_label)
     canvas.itemconfigure("textwin", state='hidden')
     canvas.itemconfigure("sliderwin", state='hidden')
     time.sleep(0.1)
-    threading.Thread(target=typetext, args=(text, buttoncheck[0], canvas, countdown_label, speedslider.get()), daemon=True).start()
+    threading.Thread(target=typetext, args=(text, buttoncheck[0], canvas, countdown_label, speedslider.get(), pausebutton), daemon=True).start()
 def control(canvas, canvas_img):
     clear(canvas, canvas_img)
+    pausecheck = [False]
+    pausebutton = canvas.create_text(366, 130, text="⏸", font=('Arial', 30), fill='white', )
+    def togglepause(e):
+        global paused
+        pausecheck[0] = not pausecheck[0]
+        paused = pausecheck[0]
+        canvas.itemconfig(pausebutton, text="▶" if pausecheck[0] else"⏸")
+    canvas.tag_bind(pausebutton, "<Button-1>", togglepause)
+    canvas.tag_bind(pausebutton, "<Enter>", lambda e: canvas.itemconfig(pausebutton, fill="#577891"))
+    canvas.tag_bind(pausebutton, "<Leave>", lambda e: canvas.itemconfig (pausebutton, fill="white"))
     exitcode = canvas.create_text(20, 20, text="Exit", font=('essedicom', 30), fill="white", anchor="nw")
     speedslider = ctk.CTkSlider(canvas, from_=0.3, to=0.01, bg_color="#0C4169", button_hover_color="#577891", fg_color="#0C4169", orientation="vertical", height=200, width=10)
     canvas.create_window(40, 200, window=speedslider, anchor="center", tags="sliderwin")
@@ -134,7 +151,7 @@ def control(canvas, canvas_img):
     canvas.create_text(200, 72, text="Enter text", font=('essedicom', 34), fill='white', anchor='center')
     buttoncheck = [False]
     typecode = canvas.create_text(200, 370, text="Start", font=('essedicom', 43), fill="white", anchor="center")
-    canvas.tag_bind(typecode, "<Button-1>", lambda e: starttyping(textarea, buttoncheck, canvas, speedslider))
+    canvas.tag_bind(typecode, "<Button-1>", lambda e: starttyping(textarea, buttoncheck, canvas, speedslider, pausebutton))
     canvas.tag_bind(typecode, "<Enter>", lambda e: canvas.itemconfig(typecode, fill="#577891"))
     canvas.tag_bind(typecode, "<Leave>", lambda e: canvas.itemconfig(typecode, fill="white"))
     chexbox = canvas.create_rectangle(138, 312, 158, 332, outline="white", width=2, fill="black", stipple="gray12")
