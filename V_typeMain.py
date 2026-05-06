@@ -42,25 +42,38 @@ def typetext(text, jitter, canvas, countdown_label, speed, pausebutton):
         if stopflag.is_set():
             break
         if jitter and random.random() < 0.05:
-            rando1 = random.choice('abcdefghijklmnopqrstuvwxyz')
-            rando2 = random.choice('abcdefghijklmnopqrstuvwxyz')
-            typer.type(rando1)
-            time.sleep(random.uniform(0.2, 0.5))
-            typer.type(rando2)
-            time.sleep(random.uniform(0.2, 0.5))
+            typoscount = random.randint(1, 5)
+            wrongchars = [random.choice('abcdefghijklmnopqrstuvwxyz') for _ in range(typoscount) ]
+            for w in wrongchars:
+                typer.type(w)
+                time.sleep(random.uniform(0.05, 0.2))
             time.sleep(random.uniform(0.3, 0.7))
             for _ in range(2):
                 time.sleep(random.uniform(0.05, 0.1))
                 typer.press(Key.backspace)
                 time.sleep(random.uniform(0.05, 0.1))
                 typer.release(Key.backspace)
-                time.sleep(random.uniform(0.05, 0.1))
+                time.sleep(random.uniform(0.08, 0.14))
             time.sleep(random.uniform(0.05, 0.2))
         typer.type(char)
         if jitter:
+            if random.random() <0.03:
+                time.sleep(random.uniform(0.5, 2))
+            if char == " " or char =="\n":
+                time.sleep(random.uniform(0.1, 0.4))
+            if char == " " and random.random() <0.03:
+                typer.type(' ')
+                time.sleep(0.1)
+                typer.press(Key.backspace)
+                typer.release(Key.backspace)
             time.sleep(random.uniform(speed * 0.5, speed * 3.5))
         else:
             time.sleep(speed)
+    if char == " " and random.random() <0.03:
+        typer.type(' ')
+        time.sleep(0.1)
+        typer.press(Key.backspace)
+        typer.release(Key.backspace)
     typing = False
     paused = False
     main_window.after(0, lambda: canvas.itemconfig(pausebutton, text="⏸"))
