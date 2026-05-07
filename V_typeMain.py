@@ -204,4 +204,5 @@ welcome(canvas, canvasbg)
 listener = keyboard.Listener(on_press=onpress)
 listener.daemon =True
 listener.start()
+main_window.iconbitmap(get_path('lgoo.ico'))
 main_window.mainloop() 
