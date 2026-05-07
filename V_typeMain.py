@@ -85,18 +85,6 @@ def typetext(text, jitter, canvas, countdown_label, speed, pausebutton):
     main_window.after(0, lambda: canvas.itemconfig(pausebutton, text="⏸"))
 def loadfont(font_path):
     windll.gdi32.AddFontResourceExW(font_path, FR_PRIVATE, 0)
-
-def roundedrect(canvas, x1, y1, x2, y2, r=20, color="#88bcf7", width=2):
-    arc_kwargs = {"outline": color, "width": width}
-    line_kwargs = {"fill": color, "width": width}
-    canvas.create_arc(x1, y1, x1+2*r, y1+2*r, start=90, extent=90, style="arc", **arc_kwargs)
-    canvas.create_arc(x2-2*r, y1, x2, y1+2*r, start=0, extent=90, style="arc", **arc_kwargs)
-    canvas.create_arc(x1, y2-2*r, x1+2*r, y2, start=180, extent=90, style="arc", **arc_kwargs)          
-    canvas.create_arc(x2-2*r, y2-2*r, x2, y2, start=270, extent=90, style="arc", **arc_kwargs)
-    canvas.create_line(x1+r, y1, x2-r, y1, **line_kwargs)
-    canvas.create_line(x1+r, y2, x2-r, y2, **line_kwargs)
-    canvas.create_line(x1, y1+r, x1, y2-r, **line_kwargs)
-    canvas.create_line(x2, y1+r, x2, y2-r, **line_kwargs)
     
 loadfont(get_path("bansheepilotbold1.ttf"))
 loadfont(get_path("essedicom.ttf"))
@@ -180,7 +168,7 @@ def control(canvas, canvas_img):
     canvas.create_text(200, 30, text="V-TYPE", font=('Banshee Pilot Bold', 30), fill="white", anchor="center")
     textarea = ctk.CTkTextbox(canvas, width =270, height=185, bg_color="#0C4169", fg_color="#0C4169", border_color="white", border_width=2, text_color="white", corner_radius=4, font=('Honor', 16), wrap="word")
     canvas.create_window(200, 198, window=textarea, anchor="center", tags="textwin")
-    canvas.create_text(200, 72, text="Enter text", font=('essedicom', 34), fill='white', anchor='center')
+    canvas.create_text(200, 80, text="Enter text", font=('essedicom', 34), fill='white', anchor='center')
     buttoncheck = [False]
     typecode = canvas.create_text(179, 360, text="Start", font=('essedicom', 43), fill="white", anchor="center")
     typecode2 = canvas.create_text(243, 365, text="(f6)", font=('Honor', 17), fill='white', anchor="center")
@@ -216,4 +204,4 @@ welcome(canvas, canvasbg)
 listener = keyboard.Listener(on_press=onpress)
 listener.daemon =True
 listener.start()
-main_window.mainloop()
+main_window.mainloop() 
