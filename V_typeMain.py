@@ -16,6 +16,12 @@ main_window.title('V-TYPE')
 main_window.geometry('400x400')
 main_window.resizable(False, False)
 typing = False
+textarea = None
+buttoncheck = None
+speedslider = None
+pausebutton = None
+pausecheck = None
+togglepause = None
 stopflag = threading.Event()
 typer = Controller()
 def get_path(relative_path):
@@ -48,7 +54,7 @@ def typetext(text, jitter, canvas, countdown_label, speed, pausebutton):
                 typer.type(w)
                 time.sleep(random.uniform(0.05, 0.2))
             time.sleep(random.uniform(0.3, 0.7))
-            for _ in range(2):
+            for _ in range(typoscount):
                 time.sleep(random.uniform(0.05, 0.1))
                 typer.press(Key.backspace)
                 time.sleep(random.uniform(0.05, 0.1))
@@ -139,9 +145,11 @@ def starttyping(textarea, buttoncheck, canvas, speedslider, pausebutton):
     time.sleep(0.1)
     threading.Thread(target=typetext, args=(text, buttoncheck[0], canvas, countdown_label, speedslider.get(), pausebutton), daemon=True).start()
 def control(canvas, canvas_img):
+    global togglepause
+    global textarea, buttoncheck, speedslider, pausebutton, pausecheck
     clear(canvas, canvas_img)
     pausecheck = [False]
-    pausebutton = canvas.create_text(366, 130, text="⏸", font=('Arial', 30), fill='white', )
+    pausebutton = canvas.create_text(366, 160, text="⏸", font=('Arial', 30), fill='white', )
     def togglepause(e):
         global paused
         pausecheck[0] = not pausecheck[0]
@@ -150,6 +158,17 @@ def control(canvas, canvas_img):
     canvas.tag_bind(pausebutton, "<Button-1>", togglepause)
     canvas.tag_bind(pausebutton, "<Enter>", lambda e: canvas.itemconfig(pausebutton, fill="#577891"))
     canvas.tag_bind(pausebutton, "<Leave>", lambda e: canvas.itemconfig (pausebutton, fill="white"))
+    restartbutton = canvas.create_text(366, 240, text="↺", font=('Arial', 30), fill="white")
+    canvas.create_text(366, 288, text="f7", font=('honor', 14), fill="white")
+    def restart(e):
+        global paused, typing
+        stopflag.set()
+        paused = False
+        typing = False
+        control(canvas, canvas_img)
+    canvas.tag_bind(restartbutton, "<Button-1>", restart)
+    canvas.tag_bind(restartbutton, "<Enter>", lambda e: canvas.itemconfig(restartbutton, fill="#577891"))
+    canvas.tag_bind(restartbutton, "<Leave>", lambda e: canvas.itemconfig(restartbutton, fill="white"))
     exitcode = canvas.create_text(20, 20, text="Exit", font=('essedicom', 30), fill="white", anchor="nw")
     speedslider = ctk.CTkSlider(canvas, from_=0.3, to=0.01, bg_color="#0C4169", button_hover_color="#577891", fg_color="#0C4169", orientation="vertical", height=200, width=10)
     canvas.create_window(40, 200, window=speedslider, anchor="center", tags="sliderwin")
@@ -176,8 +195,13 @@ def control(canvas, canvas_img):
     canvas.tag_bind(chexbox, "<Button-1>", togglebutton)
     canvas.tag_bind(buttoncheck1, "<Button-1>", togglebutton)
     canvas.create_text(200, 320, font=('essedicom', 30), fill="white", anchor='center', text="Jitter")
-
-
+def onpress(key):
+    if key == keyboard.Key.f6:
+        if not typing:
+            main_window.after(0, lambda: starttyping(textarea, buttoncheck, canvas, speedslider, pausebutton))
+    if key == keyboard.Key.f7:
+        if togglepause:
+            main_window.after(0, lambda: togglepause(None))
 def welcome(canvas, canvasbg):
     canvas.create_text(200, 150, text="V-TYPE", font=('Banshee Pilot Bold', 42), fill='white', anchor="center")
     continuetext = canvas.create_text(200, 235, text="CONTINUE", font=('essedicom', 39), fill='white', anchor="center")
@@ -185,4 +209,7 @@ def welcome(canvas, canvasbg):
     canvas.tag_bind(continuetext, "<Enter>", lambda e: canvas.itemconfig(continuetext, fill="#577891"))
     canvas.tag_bind(continuetext, "<Leave>", lambda e: canvas.itemconfig(continuetext, fill="white"))
 welcome(canvas, canvasbg)
+listener = keyboard.Listener(on_press=onpress)
+listener.daemon =True
+listener.start()
 main_window.mainloop()
