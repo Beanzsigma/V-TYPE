@@ -159,7 +159,7 @@ def control(canvas, canvas_img):
     canvas.tag_bind(pausebutton, "<Enter>", lambda e: canvas.itemconfig(pausebutton, fill="#577891"))
     canvas.tag_bind(pausebutton, "<Leave>", lambda e: canvas.itemconfig (pausebutton, fill="white"))
     restartbutton = canvas.create_text(366, 240, text="↺", font=('Arial', 30), fill="white")
-    canvas.create_text(366, 288, text="f7", font=('honor', 14), fill="white")
+    canvas.create_text(366, 120, text="f7", font=('honor', 13), fill="white")
     def restart(e):
         global paused, typing
         stopflag.set()
@@ -182,19 +182,23 @@ def control(canvas, canvas_img):
     canvas.create_window(200, 198, window=textarea, anchor="center", tags="textwin")
     canvas.create_text(200, 72, text="Enter text", font=('essedicom', 34), fill='white', anchor='center')
     buttoncheck = [False]
-    typecode = canvas.create_text(200, 370, text="Start", font=('essedicom', 43), fill="white", anchor="center")
+    typecode = canvas.create_text(179, 360, text="Start", font=('essedicom', 43), fill="white", anchor="center")
+    typecode2 = canvas.create_text(243, 365, text="(f6)", font=('Honor', 17), fill='white', anchor="center")
     canvas.tag_bind(typecode, "<Button-1>", lambda e: starttyping(textarea, buttoncheck, canvas, speedslider, pausebutton))
     canvas.tag_bind(typecode, "<Enter>", lambda e: canvas.itemconfig(typecode, fill="#577891"))
     canvas.tag_bind(typecode, "<Leave>", lambda e: canvas.itemconfig(typecode, fill="white"))
-    chexbox = canvas.create_rectangle(138, 312, 158, 332, outline="white", width=2, fill="black", stipple="gray12")
-    buttoncheck1 = canvas.create_text(148, 322, text="✓", font=('Arial', 14), fill='white')
+    canvas.tag_bind(typecode2, "<Button-1>", lambda e: starttyping(textarea, buttoncheck, canvas, speedslider, pausebutton))
+    canvas.tag_bind(typecode2, "<Enter>", lambda e: canvas.itemconfig(typecode, fill="#577891"))
+    canvas.tag_bind(typecode2, "<Leave>", lambda e: canvas.itemconfig(typecode, fill="white"))
+    chexbox = canvas.create_rectangle(148, 302, 168, 322, outline="white", width=2, fill="black", stipple="gray12")
+    buttoncheck1 = canvas.create_text(158, 312, text="✓", font=('Arial', 14), fill='white')
     canvas.itemconfig(buttoncheck1, state='hidden')
     def togglebutton(e):
         buttoncheck[0] = not buttoncheck[0]
         canvas.itemconfig(buttoncheck1, state="normal" if buttoncheck[0] else "hidden")
     canvas.tag_bind(chexbox, "<Button-1>", togglebutton)
     canvas.tag_bind(buttoncheck1, "<Button-1>", togglebutton)
-    canvas.create_text(200, 320, font=('essedicom', 30), fill="white", anchor='center', text="Jitter")
+    canvas.create_text(210, 309, font=('essedicom', 30), fill="white", anchor='center', text="Jitter")
 def onpress(key):
     if key == keyboard.Key.f6:
         if not typing:
