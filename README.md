@@ -1,6 +1,9 @@
 # V-TYPE
 ### V-TYPE is a Python based Windows automation tool that allows you to paste any text and type in various speeds. There is a feature built within this app that allows you to simulate human typing (Jitter), which types out text with natural speed variation, random pauses, and typo corrections. V-TYPE does not require an internet connection, allowing you to keep your data private and fast workflow. 
 
+## NOTE: 
+### This project was orignally for Horizons Hack Club, but I swtiched. I then noticed a streak bonus for each project in Macondo, and in Horizons, I had a streak of ten days. A screenshot is uploaded to the repository.
+
 ## Amount of AI usage
 - Minimal AI was used to fix/debug code
 - Helped create Canvas GIF background
