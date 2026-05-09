@@ -21,7 +21,7 @@
 - Adding new features and enhancing the UI
 
 ## How to Deploy
-### Download the EXE file which can be found here: (). Then, double click to run. Click the Jitter button for human like typing, and adjust the speed at the left. To pause, click f7 or the pause button, and to start, press f7 or the button at the bottom. NOTE: Windows might warn about unknown publisher. To run, click "More info," then "Run anyway."
+### Download the EXE file which can be found here: (https://github.com/Beanzsigma/V-TYPE/releases/tag/v.1). Then, double click to run. Click the Jitter button for human like typing, and adjust the speed at the left. To pause, click f7 or the pause button, and to start, press f7 or the button at the bottom. NOTE: Windows might warn about unknown publisher. To run, click "More info," then "Run anyway."
 
 ## Project DEMO
 ### Video included in the repository
